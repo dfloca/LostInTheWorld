@@ -1,0 +1,30 @@
+newmtl OrangeInodizedA0
+Ka 0 0 0
+Ns 13.9511
+Ks 1 1 1
+Kd 0.486275 0 1.73905e-007
+newmtl Centerline
+Ka 0 0 0
+Ns 8.16617
+Ks 0.94902 0.576471 0.156863
+Kd 0.94902 0.862745 0.333333
+newmtl Grey_Rock
+Ka 0 0 0
+Ns 8.16617
+Ks 1 1 1
+Kd 0.565874 0.552278 0.54372
+newmtl OrangeInodizedA1
+Ka 0 0 0
+Ns 13.9511
+Ks 1 1 1
+Kd 0.486275 0 1.73905e-007
+newmtl Diamond
+Ka 0 0 0
+Ns 34.4669
+Ks 1 1 1
+Kd 1 1 1
+newmtl Cigar_Tip
+Ka 0 0 0
+Ns 27.1126
+Ks 1 1 1
+Kd 1 0 0

@@ -1,0 +1,55 @@
+{
+   bound_relative_root: {
+      x: 0.5,
+      y: 0,
+      z: 0.5,
+   },
+   materials: [
+      {
+         name: "10067_Eiffel_Tower_v1",
+         parameters: [
+            {
+               baseColor: "10067_Eiffel_Tower_v1_diffuse",
+            },
+            {
+               baseColorTint: [
+                  0.58819999999999995,
+                  0.58819999999999995,
+                  0.58819999999999995,
+                  1,
+               ],
+            },
+            {
+               metallic: 1,
+            },
+            {
+               roughness: 0.408248,
+            },
+            {
+               opacity: null,
+            },
+         ],
+         source: "build/sceneform_sdk/default_materials/obj_material.sfm",
+      },
+   ],
+   model: {
+      attributes: [
+         "Position",
+         "TexCoord",
+         "Orientation",
+      ],
+      collision: {},
+      file: "sampledata/10067_Eiffel_Tower_v1_max2010_it1.obj",
+      name: "10067_Eiffel_Tower_v1_max2010_it1",
+      recenter: "root",
+      scale: 8.2999999999999998e-05,
+   },
+   samplers: [
+      {
+         file: "sampledata\\10067_Eiffel_Tower_v1_diffuse.jpg",
+         name: "10067_Eiffel_Tower_v1_diffuse",
+         pipeline_name: "10067_Eiffel_Tower_v1_diffuse.JPG",
+      },
+   ],
+   version: "0.52:1",
+}

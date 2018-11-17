@@ -1,0 +1,55 @@
+{
+   bound_relative_root: {
+      x: 0.5,
+      y: 0,
+      z: 0.5,
+   },
+   materials: [
+      {
+         name: "10064_colosseum",
+         parameters: [
+            {
+               baseColor: "10064_colosseum_diffuse",
+            },
+            {
+               baseColorTint: [
+                  0.58819999999999995,
+                  0.58819999999999995,
+                  0.58819999999999995,
+                  1,
+               ],
+            },
+            {
+               metallic: 1,
+            },
+            {
+               roughness: 0.408248,
+            },
+            {
+               opacity: null,
+            },
+         ],
+         source: "build/sceneform_sdk/default_materials/obj_material.sfm",
+      },
+   ],
+   model: {
+      attributes: [
+         "Position",
+         "TexCoord",
+         "Orientation",
+      ],
+      collision: {},
+      file: "sampledata/10064_colosseum_v1_Iteration0.obj",
+      name: "10064_colosseum_v1_Iteration0",
+      recenter: "root",
+      scale: 0.00015699999999999999,
+   },
+   samplers: [
+      {
+         file: "sampledata\\10064_colosseum_diffuse.jpg",
+         name: "10064_colosseum_diffuse",
+         pipeline_name: "10064_colosseum_diffuse.jpg",
+      },
+   ],
+   version: "0.52:1",
+}
