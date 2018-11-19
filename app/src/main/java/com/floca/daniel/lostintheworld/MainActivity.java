@@ -13,9 +13,17 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.ar.core.Anchor;
+import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Pose;
+import com.google.ar.core.Session;
+import com.google.ar.core.TrackingState;
+import com.google.ar.core.exceptions.UnavailableApkTooOldException;
+import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
+import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.ArSceneView;
+import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
@@ -61,7 +69,9 @@ public class MainActivity extends AppCompatActivity {
     private Random r;
     private int randomized;
 
-    private Anchor anchor;
+    //private Anchor anchor;
+    private AnchorNode anchorNode;
+    private Session session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,32 +87,45 @@ public class MainActivity extends AppCompatActivity {
             finish(); // finish the activity
             return;
         }
-
         setContentView(R.layout.activity_main);
 
         setupArScene();
+
+        arFragment.getArSceneView().getScene().addOnUpdateListener(this::onSceneUpdate);
+
+    }
+
+    private void onSceneUpdate(FrameTime frameTime){
+        arFragment.onUpdate(frameTime);
+
+        //no frame
+        if(arFragment.getArSceneView().getArFrame() == null)
+            return;
+
+        //camera is not yet tracking
+        if(arFragment.getArSceneView().getArFrame().getCamera().getTrackingState() != TrackingState.TRACKING)
+            return;
+
+        if(this.anchorNode == null){
+            Session session = arFragment.getArSceneView().getSession();
+            float[] pos = {0, 0, -1};
+            float[] rotation = {0, 0, 0, 1};
+            Anchor anchor = session.createAnchor(new Pose(pos, rotation));
+            anchorNode = new AnchorNode(anchor);
+            anchorNode.setRenderable(modelRenderable);
+            anchorNode.setParent(arFragment.getArSceneView().getScene());
+        }
     }
 
     private void setupArScene() {
         // ARFragment is what is displaying our scene
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
+        //hide ArCore hand
         arFragment.getPlaneDiscoveryController().hide();
         arFragment.getPlaneDiscoveryController().setInstructionView(null);
-        // load the renderables
-       // buildAndroidWidgetModel();
-        anchor = arFragment.getArSceneView().getSession().createAnchor(
-                arFragment.getArSceneView().getArFrame().getCamera().getPose()
-                .compose(Pose.makeTranslation(0, 0, -1f))
-                .extractTranslation()
-        );
 
         build3dModel();
-
-        addRenderableToScene(createAnchorNode(), modelRenderable);
-
-        // handle taps
-        //handleUserTaps();
-
+        addRenderableToScene(anchorNode, modelRenderable);
     }
 
     /*private void handleUserTaps() {
@@ -126,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }*/
 
-    private AnchorNode createAnchorNode() {
+    /*private AnchorNode createAnchorNode() {
 
         // create an anchor based off the the HitResult (what was tapped)
         AnchorNode anchorNode = new AnchorNode(anchor);
@@ -135,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         anchorNode.setParent(arFragment.getArSceneView().getScene());
 
         return anchorNode;
-    }
+    }*/
 
     private Node addRenderableToScene(AnchorNode anchorNode, Renderable renderable) {
         TransformableNode node = new TransformableNode(arFragment.getTransformationSystem());
@@ -143,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
         // anchor node knows where it fits into our world
         node.setParent(anchorNode);
         node.setRenderable(renderable);
-        node.select();
+        //node.select();
 
         return node;
     }
@@ -177,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void build3dModel() {
 
-        int randomized = r.nextInt(Models.values().length);
+        randomized = r.nextInt(Models.values().length);
 
         ModelRenderable.builder()
                 .setSource(this, Uri.parse(Models.values()[randomized].toString()))
