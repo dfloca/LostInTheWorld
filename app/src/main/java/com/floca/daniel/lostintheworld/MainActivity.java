@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
+import com.google.ar.core.Pose;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.rendering.ModelRenderable;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         eiffel_tower("Eiffel_Tower.sfb", 4),
         goldgate("GOLDGATE.sfb", 5),
         libertystatue("LibertyStatue.sfb", 6),
-        pisa("pisa", 7);
+        pisa("pisa.sfb", 7);
 
         private String stringVal;
         private int intVal;
@@ -59,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
 
     private Random r;
     private int randomized;
+
+    private Anchor anchor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,32 +90,45 @@ public class MainActivity extends AppCompatActivity {
         arFragment.getPlaneDiscoveryController().setInstructionView(null);
         // load the renderables
        // buildAndroidWidgetModel();
+        anchor = arFragment.getArSceneView().getSession().createAnchor(
+                arFragment.getArSceneView().getArFrame().getCamera().getPose()
+                .compose(Pose.makeTranslation(0, 0, -1f))
+                .extractTranslation()
+        );
+
         build3dModel();
 
+        addRenderableToScene(createAnchorNode(), modelRenderable);
+
         // handle taps
-        handleUserTaps();
+        //handleUserTaps();
+
     }
 
-    private void handleUserTaps() {
+    /*private void handleUserTaps() {
         arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
 
             // viewRenderable must be loaded
-            if (modelRenderable ==  null) {
+            *//*if (modelRenderable ==  null) {
                 return;
-            }
+            }*//*
 
+
+            build3dModel();
             // create the an anchor on the scene
             AnchorNode anchorNode = createAnchorNode(hitResult);
+            Anchor anchor;
+
+
             // add the view to the scene
             addRenderableToScene(anchorNode, modelRenderable);
 
         });
-    }
+    }*/
 
-    private AnchorNode createAnchorNode(HitResult hitResult) {
+    private AnchorNode createAnchorNode() {
 
         // create an anchor based off the the HitResult (what was tapped)
-        Anchor anchor = hitResult.createAnchor();
         AnchorNode anchorNode = new AnchorNode(anchor);
 
         // attach this anchor to the scene
@@ -163,8 +180,6 @@ public class MainActivity extends AppCompatActivity {
         int randomized = r.nextInt(Models.values().length);
 
         ModelRenderable.builder()
-                // helloWorld.sfb was added to the assets folder by the Sceneform plugin when
-                // we imported the asset
                 .setSource(this, Uri.parse(Models.values()[randomized].toString()))
                 .build()
                 .thenAccept(renderable -> modelRenderable = renderable)
