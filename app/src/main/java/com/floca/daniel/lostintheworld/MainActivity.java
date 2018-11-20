@@ -202,10 +202,14 @@ public class MainActivity extends AppCompatActivity implements
         List<String> answers = Arrays.asList(temp);
         Collections.shuffle(answers);
 
-        for (int i = 0; i < radioGroup.getChildCount(); i++)
-        {
-            ((RadioButton)radioGroup.getChildAt(i)).setText(answers.indexOf(i));
-        }
+        RadioButton rdb1 = findViewById(R.id.rdb1);
+        rdb1.setText(answers.get(0));
+        RadioButton rdb2 = findViewById(R.id.rdb2);
+        rdb2.setText(answers.get(1));
+        RadioButton rdb3 = findViewById(R.id.rdb3);
+        rdb3.setText(answers.get(2));
+        RadioButton rdb4 = findViewById(R.id.rdb4);
+        rdb4.setText(answers.get(3));
     }
 
     private boolean checkIsSupportedDevice(final Activity activity) {
