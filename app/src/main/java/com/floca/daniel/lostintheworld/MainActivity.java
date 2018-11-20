@@ -106,12 +106,6 @@ public class MainActivity extends AppCompatActivity {
             }
             if(this.hitResult == null)
                 this.hitResult = hitResult;
-            // create the an anchor on the scene
-            //AnchorNode anchorNode = createAnchorNode(hitResult);
-
-            // add the view to the scene
-            //addRenderableToScene(anchorNode, modelRenderable);
-
         });
     }
 
@@ -128,9 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(this.anchorNode == null && this.hitResult != null){
             session = arFragment.getArSceneView().getSession();
-            float[] pos = {0, -2, -2};
-            float[] rotation = {0, 0, 0, 1};
-            anchor = session.createAnchor(Pose.makeTranslation(0, 0.5f, 0).compose(hitResult.getHitPose())/*new Pose(pos, rotation)*/);
+            anchor = session.createAnchor(Pose.makeTranslation(0, 0.5f, 0).compose(hitResult.getHitPose()));
             anchorNode = new AnchorNode(anchor);
             anchorNode.setRenderable(modelRenderable);
             anchorNode.setParent(arFragment.getArSceneView().getScene());
@@ -154,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
         // anchor node knows where it fits into our world
         node.setParent(anchorNode);
         node.setRenderable(renderable);
+        //comment node.select() to hide model's base indicator (circle)
         //node.select();
 
         return node;
