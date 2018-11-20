@@ -29,6 +29,7 @@ import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -88,6 +89,17 @@ public class MainActivity extends AppCompatActivity implements
     private Session session;
     private HitResult hitResult;
 
+    private Button btnGuess;
+
+    private RadioGroup rdgChoices;
+
+    private RadioButton rdb1;
+    private RadioButton rdb2;
+    private RadioButton rdb3;
+    private RadioButton rdb4;
+
+    private int numModels;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,19 +119,35 @@ public class MainActivity extends AppCompatActivity implements
         fragmentManager = getFragmentManager();
         multiplechoice = new multiplechoice();
 
+        numModels = Models.values().length;
+
+        setupView();
+        //collapseChoices();
+
         setupArScene();
         handleUserTaps();
 
         arFragment.getArSceneView().getScene().addOnUpdateListener(this::onSceneUpdate);
     }
 
+    private void setupView(){
+        rdgChoices = findViewById(R.id.rdgChoices);
+
+        rdb1 = findViewById(R.id.rdb1);
+        rdb2 = findViewById(R.id.rdb2);
+        rdb3 = findViewById(R.id.rdb3);
+        rdb4 = findViewById(R.id.rdb4);
+
+        btnGuess = findViewById(R.id.btnGuess);
+    }
+
     private void handleUserTaps() {
         arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
 
-            // viewRenderable must be loaded
-            if (modelRenderable ==  null) {
+            // modelRenderable must be loaded
+            /*if (modelRenderable ==  null) {
                 return;
-            }
+            }*/
             if(this.hitResult == null)
                 this.hitResult = hitResult;
         });
@@ -143,6 +171,9 @@ public class MainActivity extends AppCompatActivity implements
             anchorNode.setRenderable(modelRenderable);
             anchorNode.setParent(arFragment.getArSceneView().getScene());
             addRenderableToScene(anchorNode, modelRenderable);
+
+            build3dModel();
+            generateAnswers();
         }
     }
 
@@ -153,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements
         arFragment.getPlaneDiscoveryController().hide();
         arFragment.getPlaneDiscoveryController().setInstructionView(null);
 
-        build3dModel();
+        //build3dModel();
     }
 
     private Node addRenderableToScene(AnchorNode anchorNode, Renderable renderable) {
@@ -170,10 +201,10 @@ public class MainActivity extends AppCompatActivity implements
 
     private void build3dModel() {
 
-        randomized = r.nextInt(Models.values().length);
+        randomized = r.nextInt(numModels);
 
         while (previousModel == randomized) {
-            randomized = r.nextInt(Models.values().length);
+            randomized = r.nextInt(numModels);
         }
 
         ModelRenderable.builder()
@@ -188,28 +219,6 @@ public class MainActivity extends AppCompatActivity implements
                     toast.show();
                     return null;
                 });
-
-
-
-        RadioGroup radioGroup = (RadioGroup)findViewById(R.id.rdgChoices);
-
-        String[] temp = new String[] {Models.values()[randomized].answerVal, 
-                                      Models.values()[r.nextInt(Models.values().length)].answerVal,
-                                      Models.values()[r.nextInt(Models.values().length)].answerVal,
-                                      Models.values()[r.nextInt(Models.values().length)].answerVal
-        };
-
-        List<String> answers = Arrays.asList(temp);
-        Collections.shuffle(answers);
-
-        RadioButton rdb1 = findViewById(R.id.rdb1);
-        rdb1.setText(answers.get(0));
-        RadioButton rdb2 = findViewById(R.id.rdb2);
-        rdb2.setText(answers.get(1));
-        RadioButton rdb3 = findViewById(R.id.rdb3);
-        rdb3.setText(answers.get(2));
-        RadioButton rdb4 = findViewById(R.id.rdb4);
-        rdb4.setText(answers.get(3));
     }
 
     private boolean checkIsSupportedDevice(final Activity activity) {
@@ -227,38 +236,52 @@ public class MainActivity extends AppCompatActivity implements
         return openGlVersion != null && Double.parseDouble(openGlVersion) >= MIN_OPENGL_VERSION;
     }
 
-    public void btnGuessClick(View view)
-    {
-        Button btn = findViewById(R.id.btnGuess);
-      /* RadioGroup myRadioGroup = findViewById(R.id.rdgChoices);
-       myRadioGroup.setVisibility(View.VISIBLE);*/
-         /*for(int i = 0; i < myRadioGroup.getChildCount(); i++){
-            View rdb = myRadioGroup.getChildAt(i);
-            rdb.setVisibility(View.VISIBLE);
-        }*/
-        RadioButton rdb1 = findViewById(R.id.rdb1);
-        RadioButton rdb2 = findViewById(R.id.rdb2);
-        RadioButton rdb3 = findViewById(R.id.rdb3);
-        RadioButton rdb4 = findViewById(R.id.rdb4);
-
-        if(rdb1.getVisibility() == View.INVISIBLE){
-            rdb1.setVisibility(View.VISIBLE);
-            rdb2.setVisibility(View.VISIBLE);
-            rdb3.setVisibility(View.VISIBLE);
-            rdb4.setVisibility(View.VISIBLE);
+    public void btnGuessClick(View view) {
+        if(btnGuess.getText().equals("▲")){
+            expandChoices();
         }
         else{
-            rdb1.setVisibility(View.INVISIBLE);
-            rdb2.setVisibility(View.INVISIBLE);
-            rdb3.setVisibility(View.INVISIBLE);
-            rdb4.setVisibility(View.INVISIBLE);
+            collapseChoices();
+        }
+    }
+
+    private void expandChoices(){
+        btnGuess.setText("▼");
+        rdb1.setVisibility(View.VISIBLE);
+        rdb2.setVisibility(View.VISIBLE);
+        rdb3.setVisibility(View.VISIBLE);
+        rdb4.setVisibility(View.VISIBLE);
+    }
+
+    private void collapseChoices(){
+        btnGuess.setText("▲");
+        rdb1.setVisibility(View.INVISIBLE);
+        rdb2.setVisibility(View.INVISIBLE);
+        rdb3.setVisibility(View.INVISIBLE);
+        rdb4.setVisibility(View.INVISIBLE);
+    }
+
+    private void generateAnswers(){
+
+        List<String> answers = new ArrayList<>();
+
+        answers.add(Models.values()[randomized].answerVal);
+
+        int current;
+        for(;;){
+            current = r.nextInt(numModels);
+
+            if(!answers.contains(Models.values()[current].answerVal))
+                answers.add(Models.values()[current].answerVal);
+            else if(answers.size() == 4)
+                break;
         }
 
-        if(btn.getText().equals("▲")){
-            btn.setText("▼");
-        }
-        else{
-            btn.setText("▲");
-        }
+        Collections.shuffle(answers);
+
+        rdb1.setText(answers.get(0));
+        rdb2.setText(answers.get(1));
+        rdb3.setText(answers.get(2));
+        rdb4.setText(answers.get(3));
     }
 }
