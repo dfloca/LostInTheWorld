@@ -77,9 +77,10 @@ public class MainActivity extends AppCompatActivity implements
     private Random r;
     private int randomized;
 
-    //private Anchor anchor;
+    private Anchor anchor;
     private AnchorNode anchorNode;
     private Session session;
+    private HitResult hitResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,9 +99,28 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         setupArScene();
+        handleUserTaps();
 
         arFragment.getArSceneView().getScene().addOnUpdateListener(this::onSceneUpdate);
 
+    }
+
+    private void handleUserTaps() {
+        arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
+
+            // viewRenderable must be loaded
+            if (modelRenderable ==  null) {
+                return;
+            }
+            if(this.hitResult == null)
+                this.hitResult = hitResult;
+            // create the an anchor on the scene
+            //AnchorNode anchorNode = createAnchorNode(hitResult);
+
+            // add the view to the scene
+            //addRenderableToScene(anchorNode, modelRenderable);
+
+        });
     }
 
     private void onSceneUpdate(FrameTime frameTime){
@@ -114,14 +134,15 @@ public class MainActivity extends AppCompatActivity implements
         if(arFragment.getArSceneView().getArFrame().getCamera().getTrackingState() != TrackingState.TRACKING)
             return;
 
-        if(this.anchorNode == null){
-            Session session = arFragment.getArSceneView().getSession();
-            float[] pos = {0, 0, -1};
+        if(this.anchorNode == null && this.hitResult != null){
+            session = arFragment.getArSceneView().getSession();
+            float[] pos = {0, -2, -2};
             float[] rotation = {0, 0, 0, 1};
-            Anchor anchor = session.createAnchor(new Pose(pos, rotation));
+            anchor = session.createAnchor(Pose.makeTranslation(0, 0.5f, 0).compose(hitResult.getHitPose())/*new Pose(pos, rotation)*/);
             anchorNode = new AnchorNode(anchor);
             anchorNode.setRenderable(modelRenderable);
             anchorNode.setParent(arFragment.getArSceneView().getScene());
+            addRenderableToScene(anchorNode, modelRenderable);
         }
     }
 
@@ -133,40 +154,7 @@ public class MainActivity extends AppCompatActivity implements
         arFragment.getPlaneDiscoveryController().setInstructionView(null);
 
         build3dModel();
-        addRenderableToScene(anchorNode, modelRenderable);
     }
-
-    /*private void handleUserTaps() {
-        arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
-
-            // viewRenderable must be loaded
-            *//*if (modelRenderable ==  null) {
-                return;
-            }*//*
-
-
-            build3dModel();
-            // create the an anchor on the scene
-            AnchorNode anchorNode = createAnchorNode(hitResult);
-            Anchor anchor;
-
-
-            // add the view to the scene
-            addRenderableToScene(anchorNode, modelRenderable);
-
-        });
-    }*/
-
-    /*private AnchorNode createAnchorNode() {
-
-        // create an anchor based off the the HitResult (what was tapped)
-        AnchorNode anchorNode = new AnchorNode(anchor);
-
-        // attach this anchor to the scene
-        anchorNode.setParent(arFragment.getArSceneView().getScene());
-
-        return anchorNode;
-    }*/
 
     private Node addRenderableToScene(AnchorNode anchorNode, Renderable renderable) {
         TransformableNode node = new TransformableNode(arFragment.getTransformationSystem());
@@ -178,33 +166,6 @@ public class MainActivity extends AppCompatActivity implements
 
         return node;
     }
-
-   /* private void buildAndroidWidgetModel() {
-
-        ViewRenderable.builder()
-                .setView(this, R.layout.hello_world_view)
-                .build()
-                .thenAccept(renderable -> {
-                    viewRenderable = renderable;
-
-                    if (viewRenderable != null) {
-                        // get the view from the renderable
-                        View androidView = viewRenderable.getView();
-
-                        Button btnToast = androidView.findViewById(R.id.button_toast);
-                        btnToast.setOnClickListener(view -> {
-                            Toast.makeText(MainActivity.this, "Hello World",
-                                    Toast.LENGTH_LONG).show();
-                        });
-                    }
-                })
-                .exceptionally(throwable -> {
-                    Toast.makeText(MainActivity.this, "Unable to display Hello World",
-                            Toast.LENGTH_LONG).show();
-
-                    return null;
-                });
-    }*/
 
     private void build3dModel() {
 
