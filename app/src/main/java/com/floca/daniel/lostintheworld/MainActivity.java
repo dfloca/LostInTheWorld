@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.net.Uri;
+import android.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,16 +16,11 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.ar.core.Anchor;
-import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Pose;
 import com.google.ar.core.Session;
 import com.google.ar.core.TrackingState;
-import com.google.ar.core.exceptions.UnavailableApkTooOldException;
-import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
-import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.sceneform.AnchorNode;
-import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.rendering.ModelRenderable;
@@ -55,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements
 
         private String stringVal;
         private int intVal;
+        private String thing;
 
         private Models(String toString, int value){
             stringVal = toString;
@@ -69,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String TAG = MainActivity.class.getName();
     private static final double MIN_OPENGL_VERSION = 3.0;
+
+    private FragmentManager fragmentManager;
+    private multiplechoice multiplechoice;
 
     private ArFragment arFragment;
     private ViewRenderable viewRenderable;
@@ -98,11 +98,13 @@ public class MainActivity extends AppCompatActivity implements
         }
         setContentView(R.layout.activity_main);
 
+        fragmentManager = getFragmentManager();
+        multiplechoice = new multiplechoice();
+
         setupArScene();
         handleUserTaps();
 
         arFragment.getArSceneView().getScene().addOnUpdateListener(this::onSceneUpdate);
-
     }
 
     private void handleUserTaps() {
@@ -193,9 +195,38 @@ public class MainActivity extends AppCompatActivity implements
         return openGlVersion != null && Double.parseDouble(openGlVersion) >= MIN_OPENGL_VERSION;
     }
 
-    public void onClick(View view)
+    public void btnGuessClick(View view)
     {
-        RadioGroup myRadioGroup = findViewById(R.id.radioG);
-        myRadioGroup.setVisibility(View.VISIBLE);
+        Button btn = findViewById(R.id.btnGuess);
+      /* RadioGroup myRadioGroup = findViewById(R.id.rdgChoices);
+       myRadioGroup.setVisibility(View.VISIBLE);*/
+         /*for(int i = 0; i < myRadioGroup.getChildCount(); i++){
+            View rdb = myRadioGroup.getChildAt(i);
+            rdb.setVisibility(View.VISIBLE);
+        }*/
+        RadioButton rdb1 = findViewById(R.id.rdb1);
+        RadioButton rdb2 = findViewById(R.id.rdb2);
+        RadioButton rdb3 = findViewById(R.id.rdb3);
+        RadioButton rdb4 = findViewById(R.id.rdb4);
+
+        if(rdb1.getVisibility() == View.INVISIBLE){
+            rdb1.setVisibility(View.VISIBLE);
+            rdb2.setVisibility(View.VISIBLE);
+            rdb3.setVisibility(View.VISIBLE);
+            rdb4.setVisibility(View.VISIBLE);
+        }
+        else{
+            rdb1.setVisibility(View.INVISIBLE);
+            rdb2.setVisibility(View.INVISIBLE);
+            rdb3.setVisibility(View.INVISIBLE);
+            rdb4.setVisibility(View.INVISIBLE);
+        }
+
+        if(btn.getText().equals("▲")){
+            btn.setText("▼");
+        }
+        else{
+            btn.setText("▲");
+        }
     }
 }
