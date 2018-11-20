@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.ar.core.Anchor;
@@ -33,7 +35,13 @@ import com.google.ar.sceneform.ux.TransformableNode;
 
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+                        multiplechoice.OnFragmentInteractionListener{
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 
     public enum Models {
         capitol("capitol.sfb", 0),
@@ -183,5 +191,11 @@ public class MainActivity extends AppCompatActivity {
         String openGlVersion = activityManager.getDeviceConfigurationInfo().getGlEsVersion();
 
         return openGlVersion != null && Double.parseDouble(openGlVersion) >= MIN_OPENGL_VERSION;
+    }
+
+    public void onClick(View view)
+    {
+        RadioGroup myRadioGroup = findViewById(R.id.radioG);
+        myRadioGroup.setVisibility(View.VISIBLE);
     }
 }
