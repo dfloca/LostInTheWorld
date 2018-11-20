@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements
 
         private String stringVal;
         private int intVal;
-        private String thing;
 
         private Models(String toString, int value){
             stringVal = toString;
