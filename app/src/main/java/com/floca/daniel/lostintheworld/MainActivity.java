@@ -9,22 +9,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.ar.core.Anchor;
-import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Pose;
 import com.google.ar.core.Session;
 import com.google.ar.core.TrackingState;
-import com.google.ar.core.exceptions.UnavailableApkTooOldException;
-import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
-import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.sceneform.AnchorNode;
-import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.rendering.ModelRenderable;
@@ -33,6 +27,9 @@ import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements
@@ -44,21 +41,23 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public enum Models {
-        capitol("capitol.sfb", 0),
-        christ_rio("Christ_Rio.sfb", 1),
-        colosseum("colosseum.sfb", 2),
-        dubai("Dubai.sfb", 3),
-        eiffel_tower("Eiffel_Tower.sfb", 4),
-        goldgate("GOLDGATE.sfb", 5),
-        libertystatue("LibertyStatue.sfb", 6),
-        pisa("pisa.sfb", 7);
+        capitol("capitol.sfb", 0, "United States Capitol"),
+        christ_rio("Christ_Rio.sfb", 1, "Christ The Redeemer"),
+        colosseum("colosseum.sfb", 2, "Colosseum"),
+        dubai("Dubai.sfb", 3, "Burj Khalifa"),
+        eiffel_tower("Eiffel_Tower.sfb", 4, "Eiffel Tower"),
+        goldgate("GOLDGATE.sfb", 5, "Golden Gate Bridge"),
+        libertystatue("LibertyStatue.sfb", 6, "Statue of Liberty"),
+        pisa("pisa.sfb", 7, "Leaning Tower of Pisa");
 
         private String stringVal;
         private int intVal;
+        private String answerVal;
 
-        private Models(String toString, int value){
+        private Models(String toString, int value, String answer){
             stringVal = toString;
             intVal = value;
+            answerVal = answer;
         }
 
         @Override
@@ -69,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String TAG = MainActivity.class.getName();
     private static final double MIN_OPENGL_VERSION = 3.0;
+
+    private int previousModel = 999999;
 
     private ArFragment arFragment;
     private ViewRenderable viewRenderable;
@@ -171,6 +172,10 @@ public class MainActivity extends AppCompatActivity implements
 
         randomized = r.nextInt(Models.values().length);
 
+        while (previousModel == randomized) {
+            randomized = r.nextInt(Models.values().length);
+        }
+
         ModelRenderable.builder()
                 .setSource(this, Uri.parse(Models.values()[randomized].toString()))
                 .build()
@@ -183,6 +188,24 @@ public class MainActivity extends AppCompatActivity implements
                     toast.show();
                     return null;
                 });
+
+
+
+        RadioGroup radioGroup = (RadioGroup)findViewById(R.id.rdgChoices);
+
+        String[] temp = new String[] {Models.values()[randomized].answerVal, 
+                                      Models.values()[r.nextInt(Models.values().length)].answerVal,
+                                      Models.values()[r.nextInt(Models.values().length)].answerVal,
+                                      Models.values()[r.nextInt(Models.values().length)].answerVal
+        };
+
+        List<String> answers = Arrays.asList(temp);
+        Collections.shuffle(answers);
+
+        for (int i = 0; i < radioGroup.getChildCount(); i++)
+        {
+            ((RadioButton)radioGroup.getChildAt(i)).setText(answers.indexOf(i));
+        }
     }
 
     private boolean checkIsSupportedDevice(final Activity activity) {
@@ -202,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public void onClick(View view)
     {
-        RadioGroup myRadioGroup = findViewById(R.id.radioG);
+        RadioGroup myRadioGroup = findViewById(R.id.rdgChoices);
         myRadioGroup.setVisibility(View.VISIBLE);
     }
 }
