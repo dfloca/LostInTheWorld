@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.net.Uri;
+import android.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements
 
         private String stringVal;
         private int intVal;
+
         private String answerVal;
 
         private Models(String toString, int value, String answer){
@@ -70,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements
     private static final double MIN_OPENGL_VERSION = 3.0;
 
     private int previousModel = 999999;
+    private FragmentManager fragmentManager;
+    private multiplechoice multiplechoice;
 
     private ArFragment arFragment;
     private ViewRenderable viewRenderable;
@@ -99,11 +104,13 @@ public class MainActivity extends AppCompatActivity implements
         }
         setContentView(R.layout.activity_main);
 
+        fragmentManager = getFragmentManager();
+        multiplechoice = new multiplechoice();
+
         setupArScene();
         handleUserTaps();
 
         arFragment.getArSceneView().getScene().addOnUpdateListener(this::onSceneUpdate);
-
     }
 
     private void handleUserTaps() {
@@ -115,12 +122,6 @@ public class MainActivity extends AppCompatActivity implements
             }
             if(this.hitResult == null)
                 this.hitResult = hitResult;
-            // create the an anchor on the scene
-            //AnchorNode anchorNode = createAnchorNode(hitResult);
-
-            // add the view to the scene
-            //addRenderableToScene(anchorNode, modelRenderable);
-
         });
     }
 
@@ -137,9 +138,7 @@ public class MainActivity extends AppCompatActivity implements
 
         if(this.anchorNode == null && this.hitResult != null){
             session = arFragment.getArSceneView().getSession();
-            float[] pos = {0, -2, -2};
-            float[] rotation = {0, 0, 0, 1};
-            anchor = session.createAnchor(Pose.makeTranslation(0, 0.5f, 0).compose(hitResult.getHitPose())/*new Pose(pos, rotation)*/);
+            anchor = session.createAnchor(Pose.makeTranslation(0, 0.5f, 0).compose(hitResult.getHitPose()));
             anchorNode = new AnchorNode(anchor);
             anchorNode.setRenderable(modelRenderable);
             anchorNode.setParent(arFragment.getArSceneView().getScene());
@@ -163,6 +162,7 @@ public class MainActivity extends AppCompatActivity implements
         // anchor node knows where it fits into our world
         node.setParent(anchorNode);
         node.setRenderable(renderable);
+        //comment node.select() to hide model's base indicator (circle)
         //node.select();
 
         return node;
@@ -223,9 +223,38 @@ public class MainActivity extends AppCompatActivity implements
         return openGlVersion != null && Double.parseDouble(openGlVersion) >= MIN_OPENGL_VERSION;
     }
 
-    public void onClick(View view)
+    public void btnGuessClick(View view)
     {
-        RadioGroup myRadioGroup = findViewById(R.id.rdgChoices);
-        myRadioGroup.setVisibility(View.VISIBLE);
+        Button btn = findViewById(R.id.btnGuess);
+      /* RadioGroup myRadioGroup = findViewById(R.id.rdgChoices);
+       myRadioGroup.setVisibility(View.VISIBLE);*/
+         /*for(int i = 0; i < myRadioGroup.getChildCount(); i++){
+            View rdb = myRadioGroup.getChildAt(i);
+            rdb.setVisibility(View.VISIBLE);
+        }*/
+        RadioButton rdb1 = findViewById(R.id.rdb1);
+        RadioButton rdb2 = findViewById(R.id.rdb2);
+        RadioButton rdb3 = findViewById(R.id.rdb3);
+        RadioButton rdb4 = findViewById(R.id.rdb4);
+
+        if(rdb1.getVisibility() == View.INVISIBLE){
+            rdb1.setVisibility(View.VISIBLE);
+            rdb2.setVisibility(View.VISIBLE);
+            rdb3.setVisibility(View.VISIBLE);
+            rdb4.setVisibility(View.VISIBLE);
+        }
+        else{
+            rdb1.setVisibility(View.INVISIBLE);
+            rdb2.setVisibility(View.INVISIBLE);
+            rdb3.setVisibility(View.INVISIBLE);
+            rdb4.setVisibility(View.INVISIBLE);
+        }
+
+        if(btn.getText().equals("▲")){
+            btn.setText("▼");
+        }
+        else{
+            btn.setText("▲");
+        }
     }
 }
