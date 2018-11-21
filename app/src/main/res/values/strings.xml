@@ -4,4 +4,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="guessButton">▼</string>
+    <string name="infoButton">ⓘ</string>
+    <string name="closeButton">x</string>
+    <string name="createdBy">Lost in the World created by Daniel Floca and Garrett Fraser</string>
 </resources>

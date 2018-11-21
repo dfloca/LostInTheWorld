@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Color;
+import android.content.Intent;
 import android.net.Uri;
 import android.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -158,6 +159,11 @@ public class MainActivity extends AppCompatActivity implements
 
             }
         });
+    }
+
+    public void btnInfoClick(View view) {
+        Intent intent = new Intent(this, InfoActivity.class);
+        startActivity(intent);
     }
 
     private void setupView(){
