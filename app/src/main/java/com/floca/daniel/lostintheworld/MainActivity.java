@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public enum Models {
         capitol("capitol.sfb", 0, "United States Capitol"),
-        christ_rio("Christ_Rio.sfb", 1, "Christ The Redeemer"),
+        //christ_rio("Christ_Rio.sfb", 1, "Christ The Redeemer"),
         colosseum("colosseum.sfb", 2, "Colosseum"),
         dubai("Dubai.sfb", 3, "Burj Khalifa"),
         eiffel_tower("Eiffel_Tower.sfb", 4, "Eiffel Tower"),
@@ -91,7 +91,8 @@ public class MainActivity extends AppCompatActivity implements
     private AnchorNode anchorNode;
     private Session session;
     private HitResult hitResult;
-    private boolean generated = false;
+    private boolean isModelGenerated = false;
+    private boolean hasChoices = false;
 
     private Button btnGuess;
 
@@ -127,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements
         numModels = Models.values().length;
 
         setupView();
-        //collapseChoices();
+        collapseChoices();
 
         setupArScene();
         handleUserTaps();
@@ -219,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements
             if(this.hitResult == null) {
                 this.hitResult = hitResult;
             }
-            if(generated)
+            if(!hasChoices)
                 generateAnswers();
         });
     }
@@ -244,8 +245,6 @@ public class MainActivity extends AppCompatActivity implements
             anchorNode.setRenderable(modelRenderable);
             anchorNode.setParent(arFragment.getArSceneView().getScene());
             addRenderableToScene(anchorNode, modelRenderable);
-
-
         }
     }
 
@@ -256,10 +255,9 @@ public class MainActivity extends AppCompatActivity implements
         arFragment.getPlaneDiscoveryController().hide();
         arFragment.getPlaneDiscoveryController().setInstructionView(null);
 
-        if(!generated)
+        if(!isModelGenerated)
         {
             build3dModel();
-            generated = true;
         }
     }
 
@@ -296,6 +294,8 @@ public class MainActivity extends AppCompatActivity implements
                     toast.show();
                     return null;
                 });
+
+        isModelGenerated = true;
     }
 
     private boolean checkIsSupportedDevice(final Activity activity) {
@@ -360,5 +360,7 @@ public class MainActivity extends AppCompatActivity implements
         rdb2.setText(answers.get(1));
         rdb3.setText(answers.get(2));
         rdb4.setText(answers.get(3));
+
+        hasChoices = true;
     }
 }
