@@ -133,10 +133,7 @@ public class MainActivity extends AppCompatActivity implements
 
         arFragment.getArSceneView().getScene().addOnUpdateListener(this::onSceneUpdate);
 
-
-        RadioGroup rdGroup = findViewById(R.id.rdgChoices);
-
-        rdGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        rdgChoices.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 String answer = Models.values()[randomized].answerVal;
@@ -206,6 +203,8 @@ public class MainActivity extends AppCompatActivity implements
             if(this.hitResult == null) {
                 this.hitResult = hitResult;
             }
+            if(generated)
+                generateAnswers();
         });
     }
 
@@ -244,7 +243,6 @@ public class MainActivity extends AppCompatActivity implements
         if(!generated)
         {
             build3dModel();
-            generateAnswers();
             generated = true;
         }
     }
