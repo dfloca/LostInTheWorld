@@ -32,7 +32,6 @@ import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -134,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
         RadioGroup rdGroup = findViewById(R.id.rdgChoices);
+
         rdGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -144,19 +144,14 @@ public class MainActivity extends AppCompatActivity implements
 //                    for (int i = 0; i < group.getChildCount(); i++) {
 //                        group.getChildAt(i).setEnabled(false);
 //                    }
-                    //Toast.makeText(, "Correct!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_LONG).show();
                 } else {
                     x.setBackgroundColor(Color.RED);
 //                    for (int i = 0; i < group.getChildCount(); i++) {
 //                        group.getChildAt(i).setEnabled(false);
 //                    }
-                    //Toast.makeText(view.getContext(), "Incorrect!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Incorrect!", Toast.LENGTH_LONG).show();
                 }
-
-                setupArScene();
-                handleUserTaps();
-
-
             }
         });
     }
@@ -184,15 +179,10 @@ public class MainActivity extends AppCompatActivity implements
             /*if (modelRenderable ==  null) {
                 return;
             }*/
-            if(this.hitResult == null)
+            if(this.hitResult == null) {
                 this.hitResult = hitResult;
-
-            if(!generated)
-            {
-                build3dModel();
-                generateAnswers();
-                generated = true;
             }
+
         });
     }
 
@@ -215,7 +205,12 @@ public class MainActivity extends AppCompatActivity implements
             anchorNode.setParent(arFragment.getArSceneView().getScene());
             addRenderableToScene(anchorNode, modelRenderable);
 
-
+            if(!generated)
+            {
+                build3dModel();
+                generateAnswers();
+                generated = true;
+            }
         }
     }
 
@@ -321,7 +316,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         Collections.shuffle(answers);
-
         rdb1.setText(answers.get(0));
         rdb2.setText(answers.get(1));
         rdb3.setText(answers.get(2));
