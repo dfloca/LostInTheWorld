@@ -141,15 +141,15 @@ public class MainActivity extends AppCompatActivity implements
                 RadioButton x = group.findViewById(checkedId);
                 if (x.getText().equals(answer)) {
                     x.setBackgroundColor(Color.GREEN);
-//                    for (int i = 0; i < group.getChildCount(); i++) {
-//                        group.getChildAt(i).setEnabled(false);
-//                    }
+                    for (int i = 0; i < group.getChildCount(); i++) {
+                        group.getChildAt(i).setEnabled(false);
+                    }
                     Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_LONG).show();
                 } else {
                     x.setBackgroundColor(Color.RED);
-//                    for (int i = 0; i < group.getChildCount(); i++) {
-//                        group.getChildAt(i).setEnabled(false);
-//                    }
+                    for (int i = 0; i < group.getChildCount(); i++) {
+                        group.getChildAt(i).setEnabled(false);
+                    }
                     Toast.makeText(getApplicationContext(), "Incorrect!", Toast.LENGTH_LONG).show();
                 }
             }
@@ -205,12 +205,7 @@ public class MainActivity extends AppCompatActivity implements
             anchorNode.setParent(arFragment.getArSceneView().getScene());
             addRenderableToScene(anchorNode, modelRenderable);
 
-            if(!generated)
-            {
-                build3dModel();
-                generateAnswers();
-                generated = true;
-            }
+
         }
     }
 
@@ -221,7 +216,12 @@ public class MainActivity extends AppCompatActivity implements
         arFragment.getPlaneDiscoveryController().hide();
         arFragment.getPlaneDiscoveryController().setInstructionView(null);
 
-        //build3dModel();
+        if(!generated)
+        {
+            build3dModel();
+            generateAnswers();
+            generated = true;
+        }
     }
 
     private Node addRenderableToScene(AnchorNode anchorNode, Renderable renderable) {
