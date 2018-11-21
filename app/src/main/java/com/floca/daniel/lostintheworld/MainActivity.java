@@ -23,6 +23,7 @@ import com.google.ar.core.HitResult;
 import com.google.ar.core.Pose;
 import com.google.ar.core.Session;
 import com.google.ar.core.TrackingState;
+import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Node;
@@ -145,17 +146,33 @@ public class MainActivity extends AppCompatActivity implements
                 if (checkedRadioBtn != null) {
                     if (checkedRadioBtn.getText().equals(answer)) {
                         checkedRadioBtn.setBackgroundColor(Color.GREEN);
+
                         for (int i = 0; i < group.getChildCount(); i++) {
                             group.getChildAt(i).setEnabled(false);
+                        }
+                        anchorNode.getScene().onRemoveChild(anchorNode.getParent());
+                        anchorNode.setRenderable(null);
+                        try {
+                            session.update();
+                        } catch (CameraNotAvailableException e) {
+                            e.printStackTrace();
                         }
                         Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_LONG).show();
                         nextRound(checkedRadioBtn);
                     }
                     else {
                         checkedRadioBtn.setBackgroundColor(Color.RED);
+                        anchorNode.getScene().onRemoveChild(anchorNode.getParent());
+                        anchorNode.setRenderable(null);
+                        try {
+                            session.update();
+                        } catch (CameraNotAvailableException e) {
+                            e.printStackTrace();
+                        }
                         for (int i = 0; i < group.getChildCount(); i++) {
                             group.getChildAt(i).setEnabled(false);
                         }
+
                         Toast.makeText(getApplicationContext(), "Incorrect!", Toast.LENGTH_LONG).show();
                         nextRound(checkedRadioBtn);
                     }
@@ -359,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void nextRound(RadioButton checked){
         build3dModel();
-       // anchorNode = null;
+
         //anchorNode.setRenderable(modelRenderable);
         addRenderableToScene(anchorNode, modelRenderable);
 
