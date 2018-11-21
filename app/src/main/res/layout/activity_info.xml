@@ -26,9 +26,10 @@
         android:layout_height="30dp"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_bg"
+        android:onClick="onCloseClick"
         android:text="@string/closeButton"
         android:textAllCaps="false"
-        android:background="@drawable/rounded_bg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

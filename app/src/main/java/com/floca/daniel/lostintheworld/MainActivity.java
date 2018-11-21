@@ -3,6 +3,7 @@ package com.floca.daniel.lostintheworld;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.content.Intent;
 import android.net.Uri;
@@ -32,7 +33,6 @@ import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getSharedPreferences("choices", 0).edit().clear().apply();
         r  = new Random();
 
         // make sure OpenGL version is supported
@@ -134,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
         RadioGroup rdGroup = findViewById(R.id.rdgChoices);
+
         rdGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -141,24 +143,46 @@ public class MainActivity extends AppCompatActivity implements
                 RadioButton x = group.findViewById(checkedId);
                 if (x.getText().equals(answer)) {
                     x.setBackgroundColor(Color.GREEN);
-//                    for (int i = 0; i < group.getChildCount(); i++) {
-//                        group.getChildAt(i).setEnabled(false);
-//                    }
-                    //Toast.makeText(, "Correct!", Toast.LENGTH_LONG).show();
+                    for (int i = 0; i < group.getChildCount(); i++) {
+                        group.getChildAt(i).setEnabled(false);
+                    }
+                    Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_LONG).show();
                 } else {
                     x.setBackgroundColor(Color.RED);
-//                    for (int i = 0; i < group.getChildCount(); i++) {
-//                        group.getChildAt(i).setEnabled(false);
-//                    }
-                    //Toast.makeText(view.getContext(), "Incorrect!", Toast.LENGTH_LONG).show();
+                    for (int i = 0; i < group.getChildCount(); i++) {
+                        group.getChildAt(i).setEnabled(false);
+                    }
+                    Toast.makeText(getApplicationContext(), "Incorrect!", Toast.LENGTH_LONG).show();
                 }
-
-                setupArScene();
-                handleUserTaps();
-
-
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences settings = getSharedPreferences("choices", 0);
+        SharedPreferences.Editor editor = settings.edit();
+
+        editor.putString("choice1", rdb1.getText().toString());
+        editor.putString("choice2", rdb2.getText().toString());
+        editor.putString("choice3", rdb3.getText().toString());
+        editor.putString("choice4", rdb4.getText().toString());
+
+        editor.apply();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        SharedPreferences settings = getSharedPreferences("choices", 0);
+
+        rdb1.setText(settings.getString("choice1", ""));
+        rdb2.setText(settings.getString("choice2", ""));
+        rdb3.setText(settings.getString("choice3", ""));
+        rdb4.setText(settings.getString("choice4", ""));
     }
 
     public void btnInfoClick(View view) {
@@ -179,20 +203,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private void handleUserTaps() {
         arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
-
-            // modelRenderable must be loaded
-            /*if (modelRenderable ==  null) {
-                return;
-            }*/
             if(this.hitResult == null)
                 this.hitResult = hitResult;
-
-            if(!generated)
-            {
-                build3dModel();
-                generateAnswers();
-                generated = true;
-            }
         });
     }
 
@@ -208,8 +220,10 @@ public class MainActivity extends AppCompatActivity implements
             return;
 
         if(this.anchorNode == null && this.hitResult != null){
+
             session = arFragment.getArSceneView().getSession();
             anchor = session.createAnchor(Pose.makeTranslation(0, 0.5f, 0).compose(hitResult.getHitPose()));
+
             anchorNode = new AnchorNode(anchor);
             anchorNode.setRenderable(modelRenderable);
             anchorNode.setParent(arFragment.getArSceneView().getScene());
@@ -226,7 +240,12 @@ public class MainActivity extends AppCompatActivity implements
         arFragment.getPlaneDiscoveryController().hide();
         arFragment.getPlaneDiscoveryController().setInstructionView(null);
 
-        //build3dModel();
+        if(!generated)
+        {
+            build3dModel();
+            generateAnswers();
+            generated = true;
+        }
     }
 
     private Node addRenderableToScene(AnchorNode anchorNode, Renderable renderable) {
@@ -246,6 +265,7 @@ public class MainActivity extends AppCompatActivity implements
         randomized = r.nextInt(numModels);
 
         while (previousModel == randomized) {
+            previousModel = randomized;
             randomized = r.nextInt(numModels);
         }
 
