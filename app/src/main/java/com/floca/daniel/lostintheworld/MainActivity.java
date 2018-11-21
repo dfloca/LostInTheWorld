@@ -205,6 +205,13 @@ public class MainActivity extends AppCompatActivity implements
         arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
             if(this.hitResult == null)
                 this.hitResult = hitResult;
+            // modelRenderable must be loaded
+            /*if (modelRenderable ==  null) {
+                return;
+            }*/
+            if(this.hitResult == null) {
+                this.hitResult = hitResult;
+            }
         });
     }
 
@@ -341,7 +348,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         Collections.shuffle(answers);
-
         rdb1.setText(answers.get(0));
         rdb2.setText(answers.get(1));
         rdb3.setText(answers.get(2));

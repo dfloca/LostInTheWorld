@@ -24,6 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="#807a7d82"
             android:visibility="visible" />
 
         <RadioButton
@@ -31,6 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="#807a7d82"
             android:visibility="visible" />
 
         <RadioButton
@@ -38,6 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="#807a7d82"
             android:visibility="visible" />
 
         <RadioButton
@@ -45,6 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="#807a7d82"
             android:visibility="visible" />
     </RadioGroup>
 
