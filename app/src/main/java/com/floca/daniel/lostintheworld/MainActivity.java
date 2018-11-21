@@ -203,12 +203,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private void handleUserTaps() {
         arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
-            if(this.hitResult == null)
-                this.hitResult = hitResult;
-            // modelRenderable must be loaded
-            /*if (modelRenderable ==  null) {
-                return;
-            }*/
             if(this.hitResult == null) {
                 this.hitResult = hitResult;
             }
