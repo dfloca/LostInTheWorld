@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private Anchor anchor;
     private AnchorNode anchorNode;
+    TransformableNode transformableNode;
     private Session session;
     private HitResult hitResult;
     private boolean isModelGenerated = false;
@@ -139,30 +140,46 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 String answer = Models.values()[randomized].answerVal;
-                RadioButton x = group.findViewById(checkedId);
-                if (x.getText().equals(answer)) {
-                    x.setBackgroundColor(Color.GREEN);
+
+                RadioButton checkedRadioBtn = group.findViewById(checkedId);
+
+                if (checkedRadioBtn.getText().equals(answer)) {
+                    checkedRadioBtn.setBackgroundColor(Color.GREEN);
                     for (int i = 0; i < group.getChildCount(); i++) {
                         group.getChildAt(i).setEnabled(false);
                     }
                     Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_LONG).show();
 
-                    finish();
-                    startActivity(getIntent());
+                   /* try {
+                        arFragment.wait(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }*/
+                    nextRound(checkedRadioBtn);
+                    /*finish();
+                    startActivity(getIntent());*/
 
 //                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
 //                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
 //                    getApplicationContext().startActivity(i);
                 }
                 else {
-                    x.setBackgroundColor(Color.RED);
+                    checkedRadioBtn.setBackgroundColor(Color.RED);
                     for (int i = 0; i < group.getChildCount(); i++) {
                         group.getChildAt(i).setEnabled(false);
                     }
                     Toast.makeText(getApplicationContext(), "Incorrect!", Toast.LENGTH_LONG).show();
 
-                    finish();
-                    startActivity(getIntent());
+
+                    /*try {
+                        arFragment.wait(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }*/
+
+                    nextRound(checkedRadioBtn);
+                    /*finish();
+                    startActivity(getIntent());*/
 
 //                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
 //                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -262,15 +279,16 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private Node addRenderableToScene(AnchorNode anchorNode, Renderable renderable) {
-        TransformableNode node = new TransformableNode(arFragment.getTransformationSystem());
+        transformableNode = new TransformableNode(arFragment.getTransformationSystem());
 
         // anchor node knows where it fits into our world
-        node.setParent(anchorNode);
-        node.setRenderable(renderable);
+        transformableNode.setParent(anchorNode);
+
+        transformableNode.setRenderable(renderable);
         //comment node.select() to hide model's base indicator (circle)
         //node.select();
 
-        return node;
+        return transformableNode;
     }
 
     private void build3dModel() {
@@ -362,5 +380,19 @@ public class MainActivity extends AppCompatActivity implements
         rdb4.setText(answers.get(3));
 
         hasChoices = true;
+    }
+
+    private void nextRound(RadioButton checked){
+        build3dModel();
+        anchorNode = null;
+        //anchorNode.setRenderable(modelRenderable);
+        addRenderableToScene(anchorNode, modelRenderable);
+
+        checked.setBackgroundColor(0x807a7d82);
+        for (int i = 0; i < rdgChoices.getChildCount(); i++) {
+            rdgChoices.getChildAt(i).setEnabled(true);
+        }
+        rdgChoices.clearCheck();
+        generateAnswers();
     }
 }
