@@ -142,48 +142,23 @@ public class MainActivity extends AppCompatActivity implements
                 String answer = Models.values()[randomized].answerVal;
 
                 RadioButton checkedRadioBtn = group.findViewById(checkedId);
-
-                if (checkedRadioBtn.getText().equals(answer)) {
-                    checkedRadioBtn.setBackgroundColor(Color.GREEN);
-                    for (int i = 0; i < group.getChildCount(); i++) {
-                        group.getChildAt(i).setEnabled(false);
+                if (checkedRadioBtn != null) {
+                    if (checkedRadioBtn.getText().equals(answer)) {
+                        checkedRadioBtn.setBackgroundColor(Color.GREEN);
+                        for (int i = 0; i < group.getChildCount(); i++) {
+                            group.getChildAt(i).setEnabled(false);
+                        }
+                        Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_LONG).show();
+                        nextRound(checkedRadioBtn);
                     }
-                    Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_LONG).show();
-
-                   /* try {
-                        arFragment.wait(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }*/
-                    nextRound(checkedRadioBtn);
-                    /*finish();
-                    startActivity(getIntent());*/
-
-//                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
-//                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                    getApplicationContext().startActivity(i);
-                }
-                else {
-                    checkedRadioBtn.setBackgroundColor(Color.RED);
-                    for (int i = 0; i < group.getChildCount(); i++) {
-                        group.getChildAt(i).setEnabled(false);
+                    else {
+                        checkedRadioBtn.setBackgroundColor(Color.RED);
+                        for (int i = 0; i < group.getChildCount(); i++) {
+                            group.getChildAt(i).setEnabled(false);
+                        }
+                        Toast.makeText(getApplicationContext(), "Incorrect!", Toast.LENGTH_LONG).show();
+                        nextRound(checkedRadioBtn);
                     }
-                    Toast.makeText(getApplicationContext(), "Incorrect!", Toast.LENGTH_LONG).show();
-
-
-                    /*try {
-                        arFragment.wait(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }*/
-
-                    nextRound(checkedRadioBtn);
-                    /*finish();
-                    startActivity(getIntent());*/
-
-//                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
-//                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                    getApplicationContext().startActivity(i);
                 }
             }
         });
@@ -296,9 +271,9 @@ public class MainActivity extends AppCompatActivity implements
         randomized = r.nextInt(numModels);
 
         while (previousModel == randomized) {
-            previousModel = randomized;
             randomized = r.nextInt(numModels);
         }
+        previousModel = randomized;
 
         ModelRenderable.builder()
                 .setSource(this, Uri.parse(Models.values()[randomized].toString()))
@@ -384,7 +359,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void nextRound(RadioButton checked){
         build3dModel();
-        anchorNode = null;
+       // anchorNode = null;
         //anchorNode.setRenderable(modelRenderable);
         addRenderableToScene(anchorNode, modelRenderable);
 
