@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements
                         multiplechoice.OnFragmentInteractionListener{
@@ -144,12 +145,27 @@ public class MainActivity extends AppCompatActivity implements
                         group.getChildAt(i).setEnabled(false);
                     }
                     Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_LONG).show();
-                } else {
+
+                    finish();
+                    startActivity(getIntent());
+
+//                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+//                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                    getApplicationContext().startActivity(i);
+                }
+                else {
                     x.setBackgroundColor(Color.RED);
                     for (int i = 0; i < group.getChildCount(); i++) {
                         group.getChildAt(i).setEnabled(false);
                     }
                     Toast.makeText(getApplicationContext(), "Incorrect!", Toast.LENGTH_LONG).show();
+
+                    finish();
+                    startActivity(getIntent());
+
+//                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+//                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                    getApplicationContext().startActivity(i);
                 }
             }
         });
