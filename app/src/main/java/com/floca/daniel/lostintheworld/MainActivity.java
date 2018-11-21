@@ -150,25 +150,25 @@ public class MainActivity extends AppCompatActivity implements
                         for (int i = 0; i < group.getChildCount(); i++) {
                             group.getChildAt(i).setEnabled(false);
                         }
-                        anchorNode.getScene().onRemoveChild(anchorNode.getParent());
-                        anchorNode.setRenderable(null);
+                        //anchorNode.getScene().onRemoveChild(anchorNode.getParent());
+                        /*anchorNode.setRenderable(null);
                         try {
                             session.update();
                         } catch (CameraNotAvailableException e) {
                             e.printStackTrace();
-                        }
+                        }*/
                         Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_LONG).show();
                         nextRound(checkedRadioBtn);
                     }
                     else {
                         checkedRadioBtn.setBackgroundColor(Color.RED);
-                        anchorNode.getScene().onRemoveChild(anchorNode.getParent());
-                        anchorNode.setRenderable(null);
+                        //anchorNode.getScene().onRemoveChild(anchorNode.getParent());
+                       /* anchorNode.setRenderable(null);
                         try {
                             session.update();
                         } catch (CameraNotAvailableException e) {
                             e.printStackTrace();
-                        }
+                        }*/
                         for (int i = 0; i < group.getChildCount(); i++) {
                             group.getChildAt(i).setEnabled(false);
                         }
@@ -247,16 +247,21 @@ public class MainActivity extends AppCompatActivity implements
 
         if(this.anchorNode == null && this.hitResult != null){
 
-            session = arFragment.getArSceneView().getSession();
-            anchor = session.createAnchor(Pose.makeTranslation(0, 0.5f, 0).compose(hitResult.getHitPose()));
-
-            anchorNode = new AnchorNode(anchor);
-            anchorNode.setRenderable(modelRenderable);
-            anchorNode.setParent(arFragment.getArSceneView().getScene());
-            addRenderableToScene(anchorNode, modelRenderable);
+            createAnchor();
         }
     }
 
+    private void createAnchor(){
+        if(session == null)
+            session = arFragment.getArSceneView().getSession();
+        if(anchor == null)
+            anchor = session.createAnchor(Pose.makeTranslation(0, 0.5f, 0).compose(hitResult.getHitPose()));
+
+        anchorNode = new AnchorNode(anchor);
+        anchorNode.setRenderable(modelRenderable);
+        anchorNode.setParent(arFragment.getArSceneView().getScene());
+        addRenderableToScene(anchorNode, modelRenderable);
+    }
     private void setupArScene() {
         // ARFragment is what is displaying our scene
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
@@ -378,7 +383,11 @@ public class MainActivity extends AppCompatActivity implements
         build3dModel();
 
         //anchorNode.setRenderable(modelRenderable);
-        addRenderableToScene(anchorNode, modelRenderable);
+
+        anchor.detach();
+        anchorNode = null;
+        createAnchor();
+        //addRenderableToScene(anchorNode, modelRenderable);
 
         checked.setBackgroundColor(0x807a7d82);
         for (int i = 0; i < rdgChoices.getChildCount(); i++) {
