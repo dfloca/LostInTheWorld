@@ -3,6 +3,7 @@ package com.floca.daniel.lostintheworld;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -128,6 +129,11 @@ public class MainActivity extends AppCompatActivity implements
         handleUserTaps();
 
         arFragment.getArSceneView().getScene().addOnUpdateListener(this::onSceneUpdate);
+    }
+
+    public void btnInfoClick(View view) {
+        Intent intent = new Intent(this, InfoActivity.class);
+        startActivity(intent);
     }
 
     private void setupView(){
