@@ -3,6 +3,7 @@ package com.floca.daniel.lostintheworld;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements
     private AnchorNode anchorNode;
     private Session session;
     private HitResult hitResult;
+    private boolean generated = false;
 
     private Button btnGuess;
 
@@ -128,6 +130,34 @@ public class MainActivity extends AppCompatActivity implements
         handleUserTaps();
 
         arFragment.getArSceneView().getScene().addOnUpdateListener(this::onSceneUpdate);
+
+
+        RadioGroup rdGroup = findViewById(R.id.rdgChoices);
+        rdGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                String answer = Models.values()[randomized].answerVal;
+                RadioButton x = group.findViewById(checkedId);
+                if (x.getText().equals(answer)) {
+                    x.setBackgroundColor(Color.GREEN);
+//                    for (int i = 0; i < group.getChildCount(); i++) {
+//                        group.getChildAt(i).setEnabled(false);
+//                    }
+                    //Toast.makeText(, "Correct!", Toast.LENGTH_LONG).show();
+                } else {
+                    x.setBackgroundColor(Color.RED);
+//                    for (int i = 0; i < group.getChildCount(); i++) {
+//                        group.getChildAt(i).setEnabled(false);
+//                    }
+                    //Toast.makeText(view.getContext(), "Incorrect!", Toast.LENGTH_LONG).show();
+                }
+
+                setupArScene();
+                handleUserTaps();
+
+
+            }
+        });
     }
 
     private void setupView(){
@@ -150,6 +180,13 @@ public class MainActivity extends AppCompatActivity implements
             }*/
             if(this.hitResult == null)
                 this.hitResult = hitResult;
+
+            if(!generated)
+            {
+                build3dModel();
+                generateAnswers();
+                generated = true;
+            }
         });
     }
 
@@ -172,8 +209,7 @@ public class MainActivity extends AppCompatActivity implements
             anchorNode.setParent(arFragment.getArSceneView().getScene());
             addRenderableToScene(anchorNode, modelRenderable);
 
-            build3dModel();
-            generateAnswers();
+
         }
     }
 
@@ -273,7 +309,8 @@ public class MainActivity extends AppCompatActivity implements
 
             if(!answers.contains(Models.values()[current].answerVal))
                 answers.add(Models.values()[current].answerVal);
-            else if(answers.size() == 4)
+
+            if(answers.size() == 4)
                 break;
         }
 
