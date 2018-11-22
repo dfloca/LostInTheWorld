@@ -7,5 +7,6 @@
     <string name="infoButton">ⓘ</string>
     <string name="closeButton">x</string>
     <string name="createdBy">Lost in the World created by Daniel Floca and Garrett Fraser</string>
+    <string name="scoreText">Your final score is:</string>
     <string name="scoreView">/5</string>
 </resources>

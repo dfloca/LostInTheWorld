@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements
     private RadioButton rdb4;
 
     private TextView txtScore;
+    private int round = 0;
     private int score = 0;
 
     private int numModels;
@@ -160,12 +161,8 @@ public class MainActivity extends AppCompatActivity implements
                             group.getChildAt(i).setEnabled(false);
                         }
 
+                        round++;
                         score++;
-
-                        if(score == 5){
-                            finish();
-                            //open score activity
-                        }
 
                         SharedPreferences settings = getSharedPreferences("choices", 0);
                         SharedPreferences.Editor editor = settings.edit();
@@ -176,9 +173,18 @@ public class MainActivity extends AppCompatActivity implements
 
                         Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_LONG).show();
 
+                        if(round == 5){
+                            finish();
+                            Intent myIntent = new Intent(MainActivity.this, ScoreActivity.class);
+                            myIntent.putExtra("score", score); //Optional parameters
+                            MainActivity.this.startActivity(myIntent);
+                        }
+
                         nextRound(checkedRadioBtn);
                     }
                     else {
+
+                        round++;
 
                         checkedRadioBtn.setBackgroundColor(Color.RED);
 
@@ -187,6 +193,14 @@ public class MainActivity extends AppCompatActivity implements
                         }
 
                         Toast.makeText(getApplicationContext(), "Incorrect!", Toast.LENGTH_LONG).show();
+
+                        if(round == 5){
+                            finish();
+                            Intent myIntent = new Intent(MainActivity.this, ScoreActivity.class);
+                            myIntent.putExtra("score", score); //Optional parameters
+                            MainActivity.this.startActivity(myIntent);
+                        }
+
                         nextRound(checkedRadioBtn);
                     }
                 }
