@@ -1,5 +1,11 @@
 package com.floca.daniel.lostintheworld;
 
+/*
+    Authors:    Daniel Floca, Garrett Fraser
+    Purpose:    MainActivity handles all game functions
+    Date:       2018-11-21
+ */
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -48,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    //enum of available models
     public enum Models {
         capitol("capitol.sfb", 0, "United States Capitol"),
         //christ_rio("Christ_Rio.sfb", 1, "Christ The Redeemer"),
@@ -83,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements
     private multiplechoice multiplechoice;
 
     private ArFragment arFragment;
-    private ViewRenderable viewRenderable;
     private ModelRenderable modelRenderable;
 
     private Random r;
@@ -131,18 +137,18 @@ public class MainActivity extends AppCompatActivity implements
 
         fragmentManager = getFragmentManager();
         multiplechoice = new multiplechoice();
-
         numModels = Models.values().length;
 
-       Intent intent = getIntent();
-       Bundle extras = intent.getExtras();
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
 
-       if(extras != null){
+        if(extras != null){
            if(extras.containsKey("score") && extras.containsKey("round")){
                score = extras.getInt("score");
                round = extras.getInt("round");
+               previousModel = extras.getInt("previous");
            }
-       }
+        }
         
         setupView();
         collapseChoices();
@@ -158,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements
                 String answer = Models.values()[randomized].answerVal;
 
                 RadioButton checkedRadioBtn = group.findViewById(checkedId);
+
                 if (checkedRadioBtn != null) {
                     if (checkedRadioBtn.getText().equals(answer)) {
 
@@ -170,24 +177,9 @@ public class MainActivity extends AppCompatActivity implements
                         round++;
                         score++;
 
-                        /*SharedPreferences settings = getSharedPreferences("score", 0);
-                        SharedPreferences.Editor editor = settings.edit();
-
-                        editor.putInt("score", score);*/
-
                         txtScore.setText(score + "/5");
 
                         Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_LONG).show();
-
-                        if(round > 5){
-                            finish();
-                            Intent myIntent = new Intent(MainActivity.this, ScoreActivity.class);
-                            myIntent.putExtra("score", score); //Optional parameters
-                            startActivity(myIntent);
-                        }
-                        else {
-                            nextRound(checkedRadioBtn);
-                        }
                     }
                     else {
 
@@ -200,16 +192,16 @@ public class MainActivity extends AppCompatActivity implements
                         }
 
                         Toast.makeText(getApplicationContext(), "Incorrect!", Toast.LENGTH_LONG).show();
+                    }
 
-                        if(round > 5){
-                            finish();
-                            Intent myIntent = new Intent(MainActivity.this, ScoreActivity.class);
-                            myIntent.putExtra("score", score); //Optional parameters
-                            startActivity(myIntent);
-                        }
-                        else {
-                            nextRound(checkedRadioBtn);
-                        }
+                    if(round > 5){
+                        finish();
+                        Intent myIntent = new Intent(MainActivity.this, ScoreActivity.class);
+                        myIntent.putExtra("score", score); //Optional parameters
+                        startActivity(myIntent);
+                    }
+                    else {
+                        nextRound();
                     }
                 }
             }
@@ -264,9 +256,10 @@ public class MainActivity extends AppCompatActivity implements
 
     private void handleUserTaps() {
         arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
-            if(this.hitResult == null) {
+            if(this.hitResult == null)
                 this.hitResult = hitResult;
-            }
+
+
             if(!hasChoices)
                 generateAnswers();
         });
@@ -283,10 +276,9 @@ public class MainActivity extends AppCompatActivity implements
         if(arFragment.getArSceneView().getArFrame().getCamera().getTrackingState() != TrackingState.TRACKING)
             return;
 
-        if(this.anchorNode == null && this.hitResult != null){
-
+        if(this.anchorNode == null && this.hitResult != null)
             createAnchor();
-        }
+
     }
 
     private void createAnchor(){
@@ -331,6 +323,7 @@ public class MainActivity extends AppCompatActivity implements
 
         randomized = r.nextInt(numModels);
 
+        //ensure we don't get the same model twice in a row
         while (previousModel == randomized) {
             randomized = r.nextInt(numModels);
         }
@@ -402,6 +395,7 @@ public class MainActivity extends AppCompatActivity implements
         for(;;){
             current = r.nextInt(numModels);
 
+            //ensure that there are no duplicate values
             if(!answers.contains(Models.values()[current].answerVal))
                 answers.add(Models.values()[current].answerVal);
 
@@ -418,11 +412,15 @@ public class MainActivity extends AppCompatActivity implements
         hasChoices = true;
     }
 
-    private void nextRound(RadioButton checked){
+    private void nextRound(){
         finish();
+
         Intent intent = new Intent(this, MainActivity.class);
+
         intent.putExtra("score", score);
         intent.putExtra("round", round);
+        intent.putExtra("previous", previousModel);
+
         startActivity(intent);
     }
 }

@@ -1,5 +1,11 @@
 package com.floca.daniel.lostintheworld;
 
+/*
+    Authors:    Daniel Floca, Garrett Fraser
+    Purpose:    Simple info activity
+    Date:       2018-11-21
+ */
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
