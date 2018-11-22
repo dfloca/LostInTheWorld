@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.ar.core.Anchor;
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private Anchor anchor;
     private AnchorNode anchorNode;
-    TransformableNode transformableNode;
+    private TransformableNode transformableNode;
     private Session session;
     private HitResult hitResult;
     private boolean isModelGenerated = false;
@@ -104,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements
     private RadioButton rdb2;
     private RadioButton rdb3;
     private RadioButton rdb4;
+
+    private TextView txtScore;
+    private int score = 0;
 
     private int numModels;
 
@@ -145,30 +149,35 @@ public class MainActivity extends AppCompatActivity implements
                 RadioButton checkedRadioBtn = group.findViewById(checkedId);
                 if (checkedRadioBtn != null) {
                     if (checkedRadioBtn.getText().equals(answer)) {
+
                         checkedRadioBtn.setBackgroundColor(Color.GREEN);
 
                         for (int i = 0; i < group.getChildCount(); i++) {
                             group.getChildAt(i).setEnabled(false);
                         }
-                        //anchorNode.getScene().onRemoveChild(anchorNode.getParent());
-                        /*anchorNode.setRenderable(null);
-                        try {
-                            session.update();
-                        } catch (CameraNotAvailableException e) {
-                            e.printStackTrace();
-                        }*/
+
+                        score++;
+
+                        if(score == 5){
+                            finish();
+                            //open score activity
+                        }
+
+                        SharedPreferences settings = getSharedPreferences("choices", 0);
+                        SharedPreferences.Editor editor = settings.edit();
+
+                        editor.putInt("score", score);
+
+                        txtScore.setText(score + R.string.scoreView);
+
                         Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_LONG).show();
+
                         nextRound(checkedRadioBtn);
                     }
                     else {
+
                         checkedRadioBtn.setBackgroundColor(Color.RED);
-                        //anchorNode.getScene().onRemoveChild(anchorNode.getParent());
-                       /* anchorNode.setRenderable(null);
-                        try {
-                            session.update();
-                        } catch (CameraNotAvailableException e) {
-                            e.printStackTrace();
-                        }*/
+
                         for (int i = 0; i < group.getChildCount(); i++) {
                             group.getChildAt(i).setEnabled(false);
                         }
@@ -206,6 +215,8 @@ public class MainActivity extends AppCompatActivity implements
         rdb2.setText(settings.getString("choice2", ""));
         rdb3.setText(settings.getString("choice3", ""));
         rdb4.setText(settings.getString("choice4", ""));
+
+        score = settings.getInt("score", 0);
     }
 
     public void btnInfoClick(View view) {
@@ -222,6 +233,8 @@ public class MainActivity extends AppCompatActivity implements
         rdb4 = findViewById(R.id.rdb4);
 
         btnGuess = findViewById(R.id.btnGuess);
+
+        txtScore = findViewById(R.id.txtScore);
     }
 
     private void handleUserTaps() {
