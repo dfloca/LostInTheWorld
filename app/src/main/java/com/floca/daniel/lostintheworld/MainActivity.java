@@ -133,6 +133,10 @@ public class MainActivity extends AppCompatActivity implements
 
         numModels = Models.values().length;
 
+        SharedPreferences settings = getSharedPreferences("choices", 0);
+
+        score = settings.getInt("score", 0);
+        
         setupView();
         collapseChoices();
 
@@ -215,8 +219,6 @@ public class MainActivity extends AppCompatActivity implements
         rdb2.setText(settings.getString("choice2", ""));
         rdb3.setText(settings.getString("choice3", ""));
         rdb4.setText(settings.getString("choice4", ""));
-
-        score = settings.getInt("score", 0);
     }
 
     public void btnInfoClick(View view) {
