@@ -262,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements
         anchorNode.setParent(arFragment.getArSceneView().getScene());
         addRenderableToScene(anchorNode, modelRenderable);
     }
+
     private void setupArScene() {
         // ARFragment is what is displaying our scene
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
@@ -380,20 +381,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void nextRound(RadioButton checked){
-        build3dModel();
-
-        //anchorNode.setRenderable(modelRenderable);
-
-        anchor.detach();
-        anchorNode = null;
-        createAnchor();
-        //addRenderableToScene(anchorNode, modelRenderable);
-
-        checked.setBackgroundColor(0x807a7d82);
-        for (int i = 0; i < rdgChoices.getChildCount(); i++) {
-            rdgChoices.getChildAt(i).setEnabled(true);
-        }
-        rdgChoices.clearCheck();
-        generateAnswers();
+        finish();
+        startActivity(getIntent());
     }
 }
