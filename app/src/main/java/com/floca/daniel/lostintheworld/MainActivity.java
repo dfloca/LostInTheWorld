@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements
     private RadioButton rdb4;
 
     private TextView txtScore;
-    private int round = 0;
+    private int round = 1;
     private int score = 0;
 
     private int numModels;
@@ -134,9 +134,15 @@ public class MainActivity extends AppCompatActivity implements
 
         numModels = Models.values().length;
 
-        SharedPreferences settings = getSharedPreferences("choices", 0);
+       Intent intent = getIntent();
+       Bundle extras = intent.getExtras();
 
-        score = settings.getInt("score", 0);
+       if(extras != null){
+           if(extras.containsKey("score") && extras.containsKey("round")){
+               score = extras.getInt("score");
+               round = extras.getInt("round");
+           }
+       }
         
         setupView();
         collapseChoices();
@@ -164,12 +170,12 @@ public class MainActivity extends AppCompatActivity implements
                         round++;
                         score++;
 
-                        SharedPreferences settings = getSharedPreferences("choices", 0);
+                        /*SharedPreferences settings = getSharedPreferences("score", 0);
                         SharedPreferences.Editor editor = settings.edit();
 
-                        editor.putInt("score", score);
+                        editor.putInt("score", score);*/
 
-                        txtScore.setText(score + R.string.scoreView);
+                        txtScore.setText(score + "/5");
 
                         Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_LONG).show();
 
@@ -251,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements
         btnGuess = findViewById(R.id.btnGuess);
 
         txtScore = findViewById(R.id.txtScore);
+        txtScore.setText(score + "/5");
     }
 
     private void handleUserTaps() {
@@ -411,6 +418,9 @@ public class MainActivity extends AppCompatActivity implements
 
     private void nextRound(RadioButton checked){
         finish();
-        startActivity(getIntent());
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("score", score);
+        intent.putExtra("round", round);
+        startActivity(intent);
     }
 }
