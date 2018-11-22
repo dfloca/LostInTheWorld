@@ -179,14 +179,15 @@ public class MainActivity extends AppCompatActivity implements
 
                         Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_LONG).show();
 
-                        if(round == 5){
+                        if(round > 5){
                             finish();
                             Intent myIntent = new Intent(MainActivity.this, ScoreActivity.class);
                             myIntent.putExtra("score", score); //Optional parameters
-                            MainActivity.this.startActivity(myIntent);
+                            startActivity(myIntent);
                         }
-
-                        nextRound(checkedRadioBtn);
+                        else {
+                            nextRound(checkedRadioBtn);
+                        }
                     }
                     else {
 
@@ -200,14 +201,15 @@ public class MainActivity extends AppCompatActivity implements
 
                         Toast.makeText(getApplicationContext(), "Incorrect!", Toast.LENGTH_LONG).show();
 
-                        if(round == 5){
+                        if(round > 5){
                             finish();
                             Intent myIntent = new Intent(MainActivity.this, ScoreActivity.class);
                             myIntent.putExtra("score", score); //Optional parameters
-                            MainActivity.this.startActivity(myIntent);
+                            startActivity(myIntent);
                         }
-
-                        nextRound(checkedRadioBtn);
+                        else {
+                            nextRound(checkedRadioBtn);
+                        }
                     }
                 }
             }
